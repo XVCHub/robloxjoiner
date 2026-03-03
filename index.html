@@ -3,85 +3,315 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>lego game joiner</title>
+<title>Roblox Server Joiner</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #a8d8f0 0%, #3a8fc7 100%);
+    background: #0d0d0f;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
   }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0, 120, 212, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(100, 60, 220, 0.12) 0%, transparent 55%);
+    pointer-events: none;
+  }
+
   .card {
-    background: white;
-    border-radius: 12px;
-    padding: 32px;
-    width: 360px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px;
+    padding: 36px 32px 32px;
+    width: 380px;
+    backdrop-filter: blur(24px);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 24px 64px rgba(0,0,0,0.5);
+    animation: fadeIn 0.4s ease;
   }
-  h1 { font-size: 20px; margin-bottom: 20px; color: #1a1a1a; }
-  label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #0078d4, #2b88d8);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0,120,212,0.35);
+  }
+
+  .logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
   input {
     width: 100%;
-    padding: 9px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 14px;
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 9px;
+    font-size: 13px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
     outline: none;
+    transition: border-color 0.15s, background 0.15s;
   }
-  input:focus { border-color: #3a8fc7; }
-  button {
-    width: 100%;
-    padding: 11px;
-    background: #3a8fc7;
-    color: white;
+
+  input::placeholder { color: rgba(255,255,255,0.22); }
+
+  input:focus {
+    border-color: rgba(0,120,212,0.7);
+    background: rgba(0,120,212,0.08);
+  }
+
+  .paste-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.08);
     border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
+    border-radius: 5px;
+    color: rgba(255,255,255,0.45);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 7px;
     cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+    transition: background 0.15s, color 0.15s;
+    width: auto;
   }
-  button:hover { background: #2d7ab0; }
-  #status { margin-top: 12px; font-size: 13px; color: #e53; min-height: 18px; }
-  #status.ok { color: #2a9d5c; }
+
+  .paste-btn:hover {
+    background: rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.8);
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 20px 0;
+  }
+
+  .join-btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #0078d4 0%, #1a8fea 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.1px;
+    box-shadow: 0 4px 20px rgba(0,120,212,0.3);
+    transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .join-btn:hover {
+    opacity: 0.92;
+    box-shadow: 0 6px 28px rgba(0,120,212,0.45);
+  }
+
+  .join-btn:active { transform: scale(0.98); }
+
+  .join-btn.loading { opacity: 0.7; pointer-events: none; }
+
+  .join-btn .btn-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #status {
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    min-height: 16px;
+    text-align: center;
+    color: rgba(255,90,90,0.9);
+    transition: opacity 0.2s;
+  }
+
+  #status.ok { color: rgba(60,210,120,0.9); }
+  #status.empty { opacity: 0; }
+
+  .hint {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
 </style>
 </head>
 <body>
+<div class="bg"></div>
 <div class="card">
-  <h1>Roblox Server Joiner</h1>
-  <label>Place ID</label>
-  <input id="placeId" placeholder="142823291" />
-  <label>Game Instance ID</label>
-  <input id="instanceId" placeholder="1c94d78b-6a62-4fa4-b439-c3aeaf1ef316" />
-  <button onclick="join()">Join</button>
-  <div id="status"></div>
+  <div class="logo">
+    <div class="logo-icon">🎮</div>
+    <div>
+      <div class="logo-text">Server Joiner</div>
+      <div class="logo-sub">Roblox direct join</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Place ID</label>
+    <div class="input-wrap">
+      <input id="placeId" placeholder="168556275" autocomplete="off" />
+      <button class="paste-btn" onclick="pasteField('placeId')">PASTE</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Game Instance ID</label>
+    <div class="input-wrap">
+      <input id="instanceId" placeholder="1c94d78b-6a62-4fa4-b439-c3aeaf1ef316" autocomplete="off" />
+      <button class="paste-btn" onclick="pasteField('instanceId')">PASTE</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="join-btn" onclick="join()">
+    <span class="btn-inner">
+      <span class="spinner" id="spinner"></span>
+      <span id="btn-text">Join Server</span>
+    </span>
+  </button>
+
+  <div id="status" class="empty"></div>
+  <div class="hint">Opens Roblox client automatically</div>
 </div>
+
 <script>
 const params = new URLSearchParams(location.search)
-if (params.get('PlaceId')) document.getElementById('placeId').value = params.get('PlaceId')
-if (params.get('GameInstanceId')) document.getElementById('instanceId').value = params.get('GameInstanceId')
+const PI = document.getElementById('placeId')
+const II = document.getElementById('instanceId')
+const STATUS = document.getElementById('status')
+const BTN = document.querySelector('.join-btn')
+const SPINNER = document.getElementById('spinner')
+const BTN_TEXT = document.getElementById('btn-text')
 
-const join = () => {
-  const PLACE = document.getElementById('placeId').value.trim()
-  const INST = document.getElementById('instanceId').value.trim()
-  const STATUS = document.getElementById('status')
-  if (!PLACE || !INST) { STATUS.textContent = 'fill in both fields'; STATUS.className = ''; return }
+if (params.get('PlaceId')) PI.value = params.get('PlaceId')
+if (params.get('GameInstanceId')) II.value = params.get('GameInstanceId')
+if (params.get('placeId')) PI.value = params.get('placeId')
+if (params.get('serverId')) II.value = params.get('serverId')
 
-  const IFRAME = document.createElement('iframe')
-  IFRAME.style.display = 'none'
-  IFRAME.src = `roblox-player:1+launchmode:play+gameinfo:${INST}+placelauncherurl:https%3A%2F%2Fassetgame.roblox.com%2Fgame%2FPlaceLauncher.ashx%3Frequest%3DRequestGameJob%26placeId%3D${PLACE}%26gameId%3D${INST}%26isPlayTogetherGame%3Dfalse`
-  document.body.appendChild(IFRAME)
-
-  STATUS.textContent = 'opening roblox...'
-  STATUS.className = 'ok'
-
-  setTimeout(() => IFRAME.remove(), 3000)
+const setStatus = (msg, ok) => {
+  STATUS.textContent = msg
+  STATUS.className = ok ? 'ok' : msg ? '' : 'empty'
 }
 
-if (params.get('PlaceId') && params.get('GameInstanceId')) join()
+const pasteField = async (id) => {
+  try {
+    const TEXT = await navigator.clipboard.readText()
+    document.getElementById(id).value = TEXT.trim()
+    document.getElementById(id).focus()
+  } catch {}
+}
+
+const join = () => {
+  const PLACE = PI.value.trim()
+  const INST = II.value.trim()
+  if (!PLACE || !INST) { setStatus('fill in both fields'); return }
+  if (!/^\d+$/.test(PLACE)) { setStatus('place id must be a number'); return }
+  if (!/^[0-9a-f-]{36}$/.test(INST)) { setStatus('invalid instance id format'); return }
+
+  BTN.classList.add('loading')
+  SPINNER.style.display = 'block'
+  BTN_TEXT.textContent = 'Launching...'
+  setStatus('opening roblox client...', true)
+
+  const LAUNCH_URL = `https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&placeId=${PLACE}&gameId=${INST}&isPlayTogetherGame=false`
+  const IFRAME = document.createElement('iframe')
+  IFRAME.style.display = 'none'
+  IFRAME.src = `roblox-player:1+launchmode:play+gameinfo:${INST}+placelauncherurl:${encodeURIComponent(LAUNCH_URL)}+browsertrackerid:0+robloxLocale:en_us+gameLocale:en_us+channel:+LaunchExp:InApp`
+  document.body.appendChild(IFRAME)
+
+  setTimeout(() => {
+    IFRAME.remove()
+    BTN.classList.remove('loading')
+    SPINNER.style.display = 'none'
+    BTN_TEXT.textContent = 'Join Server'
+    setStatus('roblox should be opening now', true)
+    setTimeout(() => setStatus('', false), 4000)
+  }, 2500)
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') join() })
+
+if (params.get('PlaceId') && params.get('GameInstanceId')) setTimeout(join, 300)
+if (params.get('placeId') && params.get('serverId')) setTimeout(join, 300)
 </script>
 </body>
 </html>
