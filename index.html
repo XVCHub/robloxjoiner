@@ -5,298 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>lego game joiner</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;800&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #050508;
-    --surface: #0d0d14;
-    --border: #1e1e2e;
-    --accent: #00f5a0;
-    --accent2: #00b4ff;
-    --text: #e0e0f0;
-    --muted: #555570;
-    --red: #ff4466;
-  }
-
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    overflow: hidden;
-  }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #a8d8f0 0%, #3a8fc7 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: Arial, sans-serif;
   }
-
-  canvas#bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.35;
-  }
-
   .card {
-    position: relative;
-    z-index: 1;
-    width: min(480px, 94vw);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 40px 36px 36px;
-    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    width: 360px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
-  }
-
-  .corner {
-    position: absolute;
-    top: 0; right: 0;
-    width: 18px; height: 18px;
-    background: var(--accent);
-    clip-path: polygon(0 0, 100% 100%, 100% 0);
-  }
-
-  .tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    margin-bottom: 28px;
-    background: linear-gradient(120deg, var(--text), var(--muted));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .field {
-    margin-bottom: 16px;
-  }
-
-  label {
-    display: block;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
+  h1 { font-size: 20px; margin-bottom: 20px; color: #1a1a1a; }
+  label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
   input {
     width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    padding: 10px 14px;
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 14px;
     outline: none;
-    transition: border-color 0.2s;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
   }
-
-  input:focus {
-    border-color: var(--accent);
-  }
-
-  input::placeholder {
-    color: var(--muted);
-  }
-
+  input:focus { border-color: #3a8fc7; }
   button {
     width: 100%;
-    margin-top: 24px;
-    padding: 14px;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    padding: 11px;
+    background: #3a8fc7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
-    transition: color 0.2s, background 0.2s;
   }
-
-  button:hover {
-    background: var(--accent);
-    color: var(--bg);
-  }
-
-  button:active {
-    transform: scale(0.98);
-  }
-
-  #status {
-    margin-top: 18px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    min-height: 18px;
-    transition: color 0.3s;
-  }
-
-  #status.ok { color: var(--accent); }
-  #status.err { color: var(--red); }
-  #status.info { color: var(--accent2); }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 24px 0;
-  }
-
-  .url-preview {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    word-break: break-all;
-    line-height: 1.6;
-  }
-
-  .url-preview span { color: var(--accent2); }
+  button:hover { background: #2d7ab0; }
+  #status { margin-top: 12px; font-size: 13px; color: #e53; min-height: 18px; }
+  #status.ok { color: #2a9d5c; }
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-
 <div class="card">
-  <div class="corner"></div>
-  <div class="tag">// roblox</div>
-  <h1>Server Joiner</h1>
-
-  <div class="field">
-    <label>Place ID</label>
-    <input id="placeId" type="text" placeholder="142823291" />
-  </div>
-
-  <div class="field">
-    <label>Game Instance ID</label>
-    <input id="instanceId" type="text" placeholder="1c94d78b-6a62-4fa4-b439-c3aeaf1ef316" />
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="url-preview" id="preview">
-    <span>?PlaceId=</span>...<span>&GameInstanceId=</span>...
-  </div>
-
-  <button onclick="join()">Launch Game</button>
-
+  <h1>Roblox Server Joiner</h1>
+  <label>Place ID</label>
+  <input id="placeId" placeholder="142823291" />
+  <label>Game Instance ID</label>
+  <input id="instanceId" placeholder="1c94d78b-6a62-4fa4-b439-c3aeaf1ef316" />
+  <button onclick="join()">Join</button>
   <div id="status"></div>
 </div>
-
 <script>
 const params = new URLSearchParams(location.search)
-const placeEl = document.getElementById('placeId')
-const instEl = document.getElementById('instanceId')
-const preview = document.getElementById('preview')
-const status = document.getElementById('status')
-
-if (params.get('PlaceId')) placeEl.value = params.get('PlaceId')
-if (params.get('GameInstanceId')) instEl.value = params.get('GameInstanceId')
-
-const updatePreview = () => {
-  const p = placeEl.value || '...'
-  const g = instEl.value || '...'
-  preview.innerHTML = `<span>?PlaceId=</span>${p}<span>&GameInstanceId=</span>${g}`
-}
-
-placeEl.addEventListener('input', updatePreview)
-instEl.addEventListener('input', updatePreview)
-updatePreview()
-
-const setStatus = (msg, type) => {
-  status.textContent = msg
-  status.className = type
-}
+if (params.get('PlaceId')) document.getElementById('placeId').value = params.get('PlaceId')
+if (params.get('GameInstanceId')) document.getElementById('instanceId').value = params.get('GameInstanceId')
 
 const join = () => {
-  const PLACE = placeEl.value.trim()
-  const INSTANCE = instEl.value.trim()
+  const PLACE = document.getElementById('placeId').value.trim()
+  const INST = document.getElementById('instanceId').value.trim()
+  const STATUS = document.getElementById('status')
 
-  if (!PLACE || !INSTANCE) return setStatus('> place id and instance id required', 'err')
-  if (!/^\d+$/.test(PLACE)) return setStatus('> invalid place id', 'err')
-  if (!/^[0-9a-f-]{36}$/.test(INSTANCE)) return setStatus('> invalid instance id format', 'err')
+  if (!PLACE || !INST) { STATUS.textContent = 'fill in both fields'; STATUS.className = ''; return }
 
-  setStatus('> launching roblox...', 'info')
-
-  try {
-    Roblox.GameLauncher.joinGameInstance(parseInt(PLACE), INSTANCE)
-    setStatus('> launched — check roblox client', 'ok')
-  } catch(e) {
-    setStatus('> failed: ' + e.message, 'err')
-  }
+  location.href = `roblox://experiences/start?placeId=${PLACE}&gameInstanceId=${INST}`
+  STATUS.textContent = 'opening roblox...'
+  STATUS.className = 'ok'
 }
 
-if (params.get('PlaceId') && params.get('GameInstanceId')) {
-  setTimeout(join, 300)
-}
-
-const canvas = document.getElementById('bg')
-const ctx = canvas.getContext('2d')
-let W, H
-
-const resize = () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight }
-resize()
-window.addEventListener('resize', resize)
-
-const DOTS = Array.from({length: 60}, () => ({
-  x: Math.random() * 1000,
-  y: Math.random() * 1000,
-  vx: (Math.random() - 0.5) * 0.3,
-  vy: (Math.random() - 0.5) * 0.3
-}))
-
-const draw = () => {
-  ctx.clearRect(0, 0, W, H)
-  for (const d of DOTS) {
-    d.x += d.vx; d.y += d.vy
-    if (d.x < 0 || d.x > W) d.vx *= -1
-    if (d.y < 0 || d.y > H) d.vy *= -1
-  }
-  ctx.strokeStyle = '#1e1e2e'
-  ctx.lineWidth = 0.5
-  for (let i = 0; i < DOTS.length; i++) {
-    for (let j = i + 1; j < DOTS.length; j++) {
-      const dx = DOTS[i].x - DOTS[j].x
-      const dy = DOTS[i].y - DOTS[j].y
-      const dist = Math.sqrt(dx*dx + dy*dy)
-      if (dist < 120) {
-        ctx.globalAlpha = 1 - dist / 120
-        ctx.beginPath()
-        ctx.moveTo(DOTS[i].x, DOTS[i].y)
-        ctx.lineTo(DOTS[j].x, DOTS[j].y)
-        ctx.stroke()
-      }
-    }
-  }
-  ctx.globalAlpha = 1
-  requestAnimationFrame(draw)
-}
-draw()
+if (params.get('PlaceId') && params.get('GameInstanceId')) join()
 </script>
 </body>
 </html>
