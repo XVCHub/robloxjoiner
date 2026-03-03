@@ -68,12 +68,17 @@ const join = () => {
   const PLACE = document.getElementById('placeId').value.trim()
   const INST = document.getElementById('instanceId').value.trim()
   const STATUS = document.getElementById('status')
-
   if (!PLACE || !INST) { STATUS.textContent = 'fill in both fields'; STATUS.className = ''; return }
 
-  location.href = `roblox://experiences/start?placeId=${PLACE}&gameInstanceId=${INST}`
+  const IFRAME = document.createElement('iframe')
+  IFRAME.style.display = 'none'
+  IFRAME.src = `roblox-player:1+launchmode:play+gameinfo:${INST}+placelauncherurl:https%3A%2F%2Fassetgame.roblox.com%2Fgame%2FPlaceLauncher.ashx%3Frequest%3DRequestGameJob%26placeId%3D${PLACE}%26gameId%3D${INST}%26isPlayTogetherGame%3Dfalse`
+  document.body.appendChild(IFRAME)
+
   STATUS.textContent = 'opening roblox...'
   STATUS.className = 'ok'
+
+  setTimeout(() => IFRAME.remove(), 3000)
 }
 
 if (params.get('PlaceId') && params.get('GameInstanceId')) join()
